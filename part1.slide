@@ -1,0 +1,285 @@
+Golang workshop - 1ª Parte
+
+Montevideo
+Junio 2018
+
+Diego Romero
+Andrés Sica
+
+
+* ¿Quienes Somos?
+
+.image ./resources/gustavo.png
+
+.image ./resources/mariano.png
+
+* WIFI
+
+Red -> guest
+
+Pass: mercadolibre2017
+
+* Presentación 
+
+http://bit.ly/2rCH9Af
+
+* Caso de uso
+
+.image ./resources/caso_de_uso.png
+
+* ¿Qué es la api de locations?
+
+Servicios:
+
+- Geolocalización por IP
+- Información de las locaciones en las que trabaja MercadoLibre (países, estados, ciudades,etc)
+- ABM árboles de locaciones
+
+Tráfico: ~ 300K RPM (100% de lecturas, escrituras ocasionales)
+
+* Platform
+
+- Fury + Servicios
+
+.image ./resources/fury_plat.png
+
+* Migración Locations API 
+
+0) Arquitectura Original
+
+.image ./resources/loc_0.png
+
+* Migración Locations API 
+
+1) Agregamos Persistencia en Key Value, Golden Gate y Sincronizador KV/RDBS
+
+.image ./resources/loc_1.png
+
+* Migración Locations API 
+
+2) Redirigimos tráfico de VIR a versión de Golang y matamos pooles innecesarios
+
+.image ./resources/loc_2.png
+
+* Migración Locations API 
+
+3) Probamos gradualmente de sacar el Varnish con buen resultado
+
+.image ./resources/loc_3.png
+
+* Migración Locations API 
+
+4) Migramos KV y API a Multi DC y matamos ATL
+
+.image ./resources/loc_4.png
+
+* Migración Locations API 
+
+5) Matamos replica RDBS -> KV y dejamos KV -> RDBS como backup
+
+.image ./resources/loc_5.png
+
+* Migración Locations API 
+
+7)Matamos replica KV -> RDBS 
+
+.image ./resources/loc_6.png
+
+* Migración Locations API 
+
+Resúmen
+
+.image ./resources/loc_resumen.png
+
+* Migración Locations API 
+
+Ahorros en hardware
+
+.image ./resources/locations_hardware.png
+
+* Migración Locations API 
+
+.image ./resources/locations_metrics.png
+
+* Golang
+
+* ¿Paradigma?
+
+- Imperativo
+- Estructurado
+- No orientado a objetos (¿?)
+
+* Go Basics
+
+- Fuertemente tipado
+- Inferencia de tipos
+- Funciones son “first class citizen”, las funciones pueden ser pasadas como parámetros
+- Parámetros pasados siempre por “valor”
+- Punteros para pasar parámetros por “referencia”
+- GC
+- “Semi” Orientado a objetos -> Composition
+- Interfaces
+- Built in Web Server
+- Built in Testing framework
+
+
+* Instalando GO!
+
+- Descarga la versión para tu OS desde [[https://golang.org/dl/][AQUÍ]]
+- Abrí el pkg y seguí las instrucciones en pantalla, Golang quedará instalado por default en -> /usr/local/go
+- Exportar GOROOT apuntando a directorio de instalación, agregar  GOROOT/bin al PATH y LISTO :)
+- Para chequear tu la instalación correcta tipear -> go version 
+
+* ¿Donde programar?
+
+- [[https://github.com/joefitzgerald/go-plus][Plugin para Atom]]
+- [[https://goclipse.github.io][Plugin para Eclipse]]
+- [[hhttps://plugins.jetbrains.com/plugin/?id=5047][Plugin para IntelliJ]]
+- [[https://github.com/DisposaBoy/GoSublime][Plugin para Sublime]]
+- [[https://github.com/Microsoft/vscode-go][Plugin para Visual Studio Code]]
+- [[https://github.com/visualfc/liteide][Lite Ide: Go IDE]]
+- [[https://github.com/golang/go/wiki/IDEsAndTextEditorPlugins][Varios mas... ]]
+
+* Go Basics: Workspace
+
+GOPATH
+	|_ BIN: Contiene los archivos ejecutables
+	|_ SRC: Contiene los fuentes organizados en paquetes
+	|_ PKG: Contiene los paquetes en formato binario
+
+*Default* *GOPATH* (go >1.8)
+
+- Unix: $HOME/go 
+- Windows: %USERPROFILE%/go
+
+* Hello world!!
+
+.play -edit ./resources/src/00_hello_world/main.go
+
+# hablar de main, package, imports, import no usado patea
+#funciones que retornen mas de 1 valor
+#ponerle edit a todo
+
+* Tipos Básicos
+
+- bool
+- string
+- int  int8  int16  int32  int64
+- uint uint8 uint16 uint32 uint64 uintptr
+- byte // alias for uint8
+- rune // alias for int32 - unicode code point
+- float32 float64
+- complex64 complex128
+
+
+* Inicialización de Variables
+
+	var s string
+	var s string = ""
+	var s = ""
+	s:=""
+
+# variable que no se usa patea
+
+*Zero* *value:*
+
+*0* para numéricos - *false* para booleanos - *""* para strings
+
+.play -edit ./resources/src/01_zero_values/main.go
+
+
+* Constantes
+
+- Pueden ser del tipo: character, string, boolean o valores numéricos
+
+- Ejemplos:
+
+	const World = "世界"
+	const Truth = true
+
+* Conversión de variables
+
+.play -edit ./resources/src/05_variables_type_convertion/main.go
+
+
+* Collections #1
+
+Arrays
+
+.play -edit ./resources/src/09_collections/1/main.go
+
+
+* Collections #2
+
+Slices
+
+	months := [...]string{1: "January", /* ... */, 12: "December"}
+	Q2 := months[4:7]                                      summer := months[6:9]
+	fmt.Println(Q2)     // ["April" "May" "June"]          fmt.Println(summer) // ["June" "July" "August"]”
+
+.image ./resources/slices.png _ _
+
+
+* Collections #2
+
+Slices
+
+.play -edit ./resources/src/09_collections/2/main.go
+
+* Collections #3
+
+Maps
+
+.play -edit ./resources/src/09_collections/3/main.go
+
+# TODO: quitar el for
+
+* Tipos de if
+
+	if x < 0 { }
+
+	if v := math.Pow(x, n); v < lim {}
+
+	if ... {} else { }
+
+* Iteraciones #1
+
+_for_initialization;_condition;_post_{_}_
+
+.play -edit ./resources/src/02_iterations/0/main.go
+
+* Iteraciones #2
+
+_for_condition_{_}_
+
+.play -edit ./resources/src/02_iterations/1/main.go
+
+* Iteraciones #3
+
+_for_{_}_
+
+.play -edit ./resources/src/02_iterations/2/main.go
+
+* Iteraciones #4
+
+_using_range_
+
+# TODO: usar el indice
+
+.play -edit ./resources/src/02_iterations/3/main.go
+
+* Switch
+
+.play -edit ./resources/src/02_iterations/4/main.go
+
+* Funciones
+
+.play -edit ./resources/src/03_functions/main.go
+
+* Ejercicio 1
+
+
+ejercicio, recorrer numeros del 1 al 100 y almacenar en un array los que son divisibles entre 5 y 3
+
+
+

@@ -1,0 +1,104 @@
+Golang workshop - 3ª Parte
+
+Montevideo
+Junio 2018
+
+Diego Romero
+Andrés Sica
+
+
+* Presentación 
+
+http://bit.ly/2rCH9Af
+
+* Paralelismo vs Concurrencia
+
+.image ./img/concurrency_parallelism.png              
+
+Una excelente charla!
+
+Rob Pike (Co-Creador de Go)
+.link https://blog.golang.org/concurrency-is-not-parallelism
+
+* Gorutines
+
+.play -edit ./resources/src/14_gorutines/main.go
+
+* Defer
+
+.play -edit ./resources/src/13_defer/main.go
+
+#TODO: hablar de errores
+
+* Recover
+
+.play -edit ./resources/src/16_recover/main.go /START OMIT/,/END OMIT/
+
+* Channels
+
+Un channel en Golang es un tipo de dato, un conducto, que nos permite enviar y recibir mensajes a través de él.
+
+Creación de un channel:
+
+	var sChannel chan string = make(chan string)
+
+El operador <- nos permite enviar información a un channel:
+
+	sChannel <- "hello"
+
+y recibir información desde él:
+
+	var s string = <- sChannel
+
+los channels son bloqueantes, es decir, cada vez que agregamos información a un channel el emisor se bloquea hasta que un receptor toma el mensaje del conducto. Esto los hace una excelente herramienta para sincronizar goroutines sin un mecanismo de lock especifico.
+
+* Channels continuación
+
+A la creación de un channel se le puede asignar un tamaño dando lugar a un buffered Channel:
+ 
+	var sChannel chan string = make(chan string, 100)
+ 
+en estos casos el emisor sólo se bloqueará cuando el buffer esté lleno y el receptor cuando esté vacío.
+ 
+Para iterar sobre el contenido de un channel podemos utilizar el for + range:
+ 
+	for s := range sChannel {
+		// do something with s
+	}
+
+* Channels continuación
+
+Usamos la build-in fuction "close" para cerrar un channel e indicar a todos los consumers que dicho channel no se van a enviar más elementos y así liberarlos.
+ 
+	close(intChannel)
+ 
+los consumers pueden chequear el status de un channel mediante un segundo parámetro en la expresión de asignación:
+ 
+	v, ok := <- sChannel
+
+* Channels: Simple channel
+
+.play -edit ./resources/src/22_channels/simple/main.go
+
+# mostrar deadlock sin goroutina pero no si buffered
+
+
+* Channel Synchronization
+
+.play -edit ./resources/src/22_channels/synchronization/basic/main.go
+
+#probar si lectura para ver que termina sin esperar
+
+* Channel Synchronization
+
+.play -edit ./resources/src/22_channels/synchronization/select/main.go
+
+# https://talks.golang.org/2012/concurrency.slide#35
+
+* Ejercicio
+
+ejercicio, dado un array de distintos strings, contar de forma concurrente la aparición de letras entre todos
+
+http://exercism.io/exercises/go/parallel-letter-frequency/readme
+https://play.golang.org/p/zIOxML4xy1f
+
